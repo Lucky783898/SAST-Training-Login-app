@@ -1,0 +1,179 @@
+{
+  "info": {
+    "_postman_id": "b2c3d4e5-f6a7-8901-2345-67890abcdef1",
+    "name": "Spring Boot Login API - All Scenarios",
+    "description": "Comprehensive Postman collection testing happy paths, validation errors, and authorization failures.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Registration Scenarios",
+      "item": [
+        {
+          "name": "Happy Flow: Register User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"johndoe@example.com\",\n    \"password\": \"secret123\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"]}
+          }
+        },
+        {
+          "name": "Negative: Duplicate Email (Run after Happy Flow)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Smith\",\n    \"email\": \"johndoe@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"]}
+          }
+        },
+        {
+          "name": "Negative: Invalid Email Format",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"John\",\n    \"email\": \"not-an-email\",\n    \"password\": \"secret123\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"]}
+          }
+        },
+        {
+          "name": "Negative: Password Too Short",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"John\",\n    \"email\": \"newuser@example.com\",\n    \"password\": \"123\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Login Scenarios",
+      "item": [
+        {
+          "name": "Happy Flow: Login Successful (Sets Session)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"johndoe@example.com\",\n    \"password\": \"secret123\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"]}
+          }
+        },
+        {
+          "name": "Negative: Wrong Password",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"johndoe@example.com\",\n    \"password\": \"wrongpassword\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"]}
+          }
+        },
+        {
+          "name": "Negative: User Not Found",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"nobody@example.com\",\n    \"password\": \"secret123\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Profile Scenarios (Protected)",
+      "item": [
+        {
+          "name": "Happy Flow: Get Profile (Run after Login)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:8080/api/auth/profile", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "profile"]}
+          }
+        },
+        {
+          "name": "Negative: Profile Without Login (Clear Postman Cookies First)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:8080/api/auth/profile", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "profile"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Change Password Scenarios (Protected)",
+      "item": [
+        {
+          "name": "Negative: Wrong Old Password",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"oldPassword\": \"completelyWrong123\",\n    \"newPassword\": \"newSuperSecret!\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/change-password", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "change-password"]}
+          }
+        },
+        {
+          "name": "Negative: New Password Too Short",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"oldPassword\": \"secret123\",\n    \"newPassword\": \"abc\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/change-password", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "change-password"]}
+          }
+        },
+        {
+          "name": "Happy Flow: Change Password Success",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"oldPassword\": \"secret123\",\n    \"newPassword\": \"newSuperSecret!\"\n}"
+            },
+            "url": {"raw": "http://localhost:8080/api/auth/change-password", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "change-password"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Logout Scenarios",
+      "item": [
+        {
+          "name": "Happy Flow: Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {"raw": "http://localhost:8080/api/auth/logout", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "logout"]}
+          }
+        }
+      ]
+    }
+  ]
+}
